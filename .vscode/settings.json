@@ -1,0 +1,6 @@
+{
+    "terminal.integrated.env.linux": {
+        "PATH": "/home/oleksandr/.platformio/penv/bin:/home/oleksandr/.platformio/penv:/app/bin:/usr/bin:/home/oleksandr/.var/app/com.visualstudio.code/data/node_modules/bin",
+        "PLATFORMIO_CALLER": "vscode"
+    }
+}
