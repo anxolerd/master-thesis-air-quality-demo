@@ -1,5 +1,11 @@
 #include <Arduino.h>
 
+// Connectivity
+#include "ESP8266WiFi.h"
+#include "Credentials.hh"
+#include "MQTT.hh"
+
+// Sensors
 #include "DHT.h"
 #include "MQ8.hh"
 
@@ -21,17 +27,27 @@ const bool isFarengheit = false;
 
 DHT dht(DHT11_PIN, DHT11);
 MQ8 mq8(MQ8_AOUT_PIN, MQ8_DOUT_PIN);
+MQTTClient mqtt(MqttServer);
 
 void setup() {
   Serial.begin(9600);
+  delay(100);
 
-  Serial.printf("Initializing air quality sensor ...\n");
-  
+  Serial.printf("Initializing air quality sensor node ...\n");
+
+  // Connect DHT11  
+  Serial.print("- DHT11 sensor initialization ... ");
   dht.begin();
-  Serial.printf("(+) DHT11 sensor initialized ...\n");
+  Serial.println("OK");
 
+  // Connect MQ8 Sensor
+  Serial.print("- MQ8 Hydrogen Gas Sensor initialization ... ");
   mq8.begin();
-  Serial.printf("(+) MQ8 Hydrogen Gas Sensor initialized ...\n");
+  Serial.println("OK");
+
+  // Connect to MQTT
+  Serial.print(" - MQTT broker initialization ... ");
+  mqtt.begin(WiFiSsid, WiFiPass);
 
   Serial.printf("---------- Initialization complete ----------\n");
 }
@@ -52,16 +68,20 @@ void processTemperatureAndHumidity(DHT& dht) {
   }  
   float heatIndex = dht.computeHeatIndex(temperature, humidity, isFarengheit);
   Serial.printf(
-    "Temperature is %fC, humidity is %f %%, HeatIndex is %f\n",
+    "Temperature is %.2f°C, humidity is %.2f%%, heat index is %.2f.\n",
     temperature, humidity, heatIndex
   );
+  mqtt.publishTemperature(temperature);
+  mqtt.publishHumidity(humidity);
 }
 
 void processHydrogenGas(MQ8& mq8) {
-  int value= mq8.readValue(); //reads the analaog value from the hydrogen sensor's AOUT pin
-  bool isLimitReached = mq8.isLimitReached();//reads the digital value from the hydrogen sensor's DOUT pin
-  Serial.print("Hydrogen value: ");
-  Serial.print(value);//prints the hydrogen value
-  Serial.print(" Limit reached?: ");
-  Serial.println(isLimitReached);
+  int ppm= mq8.readValue();
+  bool isLimitReached = mq8.isLimitReached();
+  Serial.printf(
+    "Hydrogen value: %d ppm. %s\n",
+     ppm,
+     isLimitReached ? "Limit reached!" : "All fine."
+  );
+  mqtt.publishHydrogen(ppm);
 }
