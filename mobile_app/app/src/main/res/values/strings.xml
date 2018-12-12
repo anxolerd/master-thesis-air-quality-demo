@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">airquality-demo</string>
+    <string name="activate_air_condition">Air condition on</string>
+    <string name="deactivate_air_condition">Air condition off</string>
+</resources>
