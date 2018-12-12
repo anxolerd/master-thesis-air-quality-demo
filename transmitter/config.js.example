@@ -1,0 +1,25 @@
+var localBroker = {
+    url: 'mqtt://localhost:1883',
+    topics: [
+        'anxolerd/feeds/temperature',
+        'anxolerd/feeds/humidity',
+        'anxolerd/feeds/hydrogen',
+    ],
+};
+var externalBroker = {
+    url: 'mqtts://example.com:8883',
+    options: {
+        username: 'username',
+        password: 'password',
+        keepalive: 2,
+    },
+    topics: [
+        'anxolerd/feeds/cmd',
+    ],
+};
+
+
+module.exports = {
+    localBroker: localBroker,
+    externalBroker: externalBroker,
+};
