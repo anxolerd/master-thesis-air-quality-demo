@@ -17,7 +17,7 @@ void processHydrogenGas(MQ8&);
 // ********** Define pins **********
 static const uint8_t DHT11_PIN = D7;
 static const uint8_t MQ8_AOUT_PIN = A0;
-static const uint8_t MQ8_DOUT_PIN = D8;
+static const uint8_t MQ8_DOUT_PIN = D2;
 // *********************************
 
 // ********* Define consts *********
@@ -55,7 +55,7 @@ void setup() {
 void loop() {
   processTemperatureAndHumidity(dht);
   processHydrogenGas(mq8);
-  delay(1000);
+  delay(5000);
 }
 
 
