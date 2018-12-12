@@ -10,10 +10,10 @@ class MqttHelper(context: Context) : MqttCallbackExtended {
     companion object {
         private val LOG_TAG = ::MqttHelper.javaClass.name
 
-        val TEMPERATURE_TOPIC = "anxolerd/feeds/temperature"
-        val HUMIDITY_TOPIC = "anxolerd/feeds/humidity"
-        val HYDROGEN_TOPC = "anxolerd/feeds/hydrogen"
-        val COMMANDS_TOPIC = "anxolerd/feeds/cmd"
+        const val TEMPERATURE_TOPIC = "anxolerd/feeds/temperature"
+        const val HUMIDITY_TOPIC = "anxolerd/feeds/humidity"
+        const val HYDROGEN_TOPC = "anxolerd/feeds/hydrogen"
+        const val COMMANDS_TOPIC = "anxolerd/feeds/cmd"
 
         internal val MQTT_SERVER_URL = "ssl://localhost:8883"
 
