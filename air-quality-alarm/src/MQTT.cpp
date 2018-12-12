@@ -3,6 +3,7 @@
 const char* MQTTClient::TEMPERATURE_TOPIC = "anxolerd/feeds/temperature";
 const char* MQTTClient::HUMIDITY_TOPIC="anxolerd/feeds/humidity";
 const char* MQTTClient::HYDROGEN_TOPIC="anxolerd/feeds/hydrogen";
+const char* MQTTClient::COMMAND_TOPIC="anxolerd/feeds/cmd";
 
 void _noop(uint8_t* payload, unsigned int) {}
 
@@ -13,6 +14,7 @@ MQTTClient::MQTTClient(const char* mqttServer, uint16_t mqttPort) {
     _temperatureCb = _noop;
     _humidityCb = _noop;
     _hydrogenCb = _noop;
+    _commandCb = _noop;
 }
 
 void MQTTClient::begin(const char* ssid, const char* pass) {
@@ -54,6 +56,7 @@ void MQTTClient::reconnect() {
       _client.subscribe(TEMPERATURE_TOPIC);
       _client.subscribe(HUMIDITY_TOPIC);
       _client.subscribe(HYDROGEN_TOPIC);
+      _client.subscribe(COMMAND_TOPIC);
     } else {
       Serial.print("failed, rc=");
       Serial.print(_client.state());
@@ -76,6 +79,7 @@ void MQTTClient::_callback(char* topic, uint8_t* payload, unsigned int length) {
     if (!strcmp(topic, TEMPERATURE_TOPIC)) return _temperatureCb(payload, length);
     if (!strcmp(topic, HUMIDITY_TOPIC)) return _humidityCb(payload, length);
     if (!strcmp(topic, HYDROGEN_TOPIC)) return _hydrogenCb(payload, length);
+    if (!strcmp(topic, COMMAND_TOPIC)) return _commandCb(payload, length);
 }
 
 void MQTTClient::subscribeTemperature(std::function<void(uint8_t*, unsigned int)> cb) {
@@ -88,4 +92,8 @@ void MQTTClient::subscribeHumidity(std::function<void(uint8_t*, unsigned int)> c
 
 void MQTTClient::subscribeHydrogen(std::function<void(uint8_t*, unsigned int)> cb) {
     _hydrogenCb = cb;
+}
+
+void MQTTClient::subscribeCommand(std::function<void(uint8_t*, unsigned int)> cb) {
+    _commandCb = cb;
 }

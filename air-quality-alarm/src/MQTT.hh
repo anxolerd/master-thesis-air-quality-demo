@@ -18,17 +18,20 @@ class MQTTClient {
         void subscribeTemperature(std::function<void(uint8_t*, unsigned int)>);
         void subscribeHumidity(std::function<void(uint8_t*, unsigned int)>);
         void subscribeHydrogen(std::function<void(uint8_t*, unsigned int)>);
+        void subscribeCommand(std::function<void(uint8_t*, unsigned int)>);
         void loop();
 
         static const char* TEMPERATURE_TOPIC;
         static const char* HUMIDITY_TOPIC;
         static const char* HYDROGEN_TOPIC;
+        static const char* COMMAND_TOPIC;
     private:
         WiFiClient _wifiClient;
         PubSubClient _client;
         std::function<void(uint8_t*, unsigned int)> _temperatureCb;
         std::function<void(uint8_t*, unsigned int)> _humidityCb;
         std::function<void(uint8_t*, unsigned int)> _hydrogenCb;
+        std::function<void(uint8_t*, unsigned int)> _commandCb;
 
         void _callback(char* topic, uint8_t* payload, unsigned int length);
 

@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "ESP8266WiFi.h"
+#include <Servo.h>
 
 #include "RGBLed.hh"
 #include "Credentials.hh"
@@ -12,18 +13,27 @@ const uint8_t LED_RGB_R_PIN = D2;
 const uint8_t LED_RGB_G_PIN = D3;
 const uint8_t LED_RGB_B_PIN = D4;
 
-const uint8_t LED_PIN = D5;
+const uint8_t LED_PIN = D6;
+
+const uint8_t SERVO_PIN = D9;
 // *********************************
 
 // ********* Function defs *********
 void onTemperatureReceived(uint8_t* payload, unsigned int length);
 void onHumidityReceived(uint8_t* payload, unsigned int length);
 void onHydrogenReceived(uint8_t* payload, unsigned int length);
+void onCommandReceived(uint8_t* payload, unsigned int length);
 // *********************************
+
+// *********** Constants **********
+const char* ENABLE_AIR_COND = "enableAirCondition";
+const char* DISABLE_AIR_COND = "disableAirCondition";
+// ********************************
 
 
 MQTTClient mqtt(MqttServer);
 RGBLed rgb(LED_RGB_R_PIN, LED_RGB_G_PIN, LED_RGB_B_PIN);
+Servo servo;
 
 float temperature = 0.0;
 float humidity = 0.0;
@@ -36,12 +46,22 @@ void setup() {
   Serial.print("- Initialize RGB LED ... ");
   rgb.begin();
   Serial.println("OK");
-  
+
+  Serial.print("- Initialize LED ... ");
+  pinMode(LED_PIN, OUTPUT);
+  Serial.println("OK");
+
+  Serial.print("- Initialize servo ... ");
+  servo.attach(SERVO_PIN);
+  servo.write(90);
+  Serial.println("OK");
+
   Serial.print("- Initialize MQTT connection ...");
   mqtt.begin(WiFiSsid, WiFiPass);
   mqtt.subscribeTemperature(onTemperatureReceived);
   mqtt.subscribeHumidity(onHumidityReceived);
   mqtt.subscribeHydrogen(onHydrogenReceived);
+  mqtt.subscribeCommand(onCommandReceived);
 
   Serial.println("----------- Initialization complete ----------");
 }
@@ -71,7 +91,7 @@ void loop() {
 
   if (hydrogen > 900) {
     digitalWrite(LED_PIN, HIGH);
-    delay(100);
+  } else {
     digitalWrite(LED_PIN, LOW);
   }
 
@@ -102,4 +122,20 @@ void onHydrogenReceived(uint8_t* payload, unsigned int length) {
 
   hydrogen = String(buffer).toFloat();
   delete[] buffer;
+}
+
+void onCommandReceived(uint8_t* payload, unsigned int length) {
+  char* command = new char[length+1];
+  memcpy(command, payload, length);
+  command[length] = '\0';
+
+  Serial.printf("Command received: %s\n", command);
+  if (!strcmp(command, ENABLE_AIR_COND)) {
+    servo.write(7);
+    return;
+  }
+  if (!strcmp(command, DISABLE_AIR_COND)) {
+    servo.write(180);
+    return;
+  }
 }
