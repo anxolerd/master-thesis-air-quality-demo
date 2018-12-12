@@ -13,6 +13,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        buildConfigField 'java.util.Hashtable<String, String>', 'MQTT', makePropertyHashTable(getRootDir().getPath() + File.separator + 'app.properties')
     }
     buildTypes {
         release {
@@ -20,6 +21,29 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+}
+
+
+def makePropertyHashTable(filename) {
+    def devProperties = new Properties()
+    try {
+        devProperties.load(new FileInputStream(file(filename)))
+    } catch (FileNotFoundException e) {
+        devProperties = null
+        System.out.println('devProperties is null')
+    }
+
+    // result example: new Hashtable<String, Boolean>(){{ put(true, "a"); }};
+    def prefix = 'new java.util.Hashtable<String, String>(){{ '
+    def suffix = '}}'
+    def value = ''
+    if (devProperties != null) {
+        for (d in devProperties) {
+            value += String.format('put("%s",%s); ', d.key, d.value)
+        }
+    }
+
+    return String.format('%s%s%s', prefix, value, suffix)
 }
 
 repositories {

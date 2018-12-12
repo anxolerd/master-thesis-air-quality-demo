@@ -1,0 +1,3 @@
+MQTT_SERVER_URL = "ssl://localhost:8883"
+MQTT_USER = "username"
+MQTT_PASS = "password"

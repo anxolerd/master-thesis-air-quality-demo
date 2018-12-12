@@ -15,13 +15,13 @@ class MqttHelper(context: Context) : MqttCallbackExtended {
         const val HYDROGEN_TOPC = "anxolerd/feeds/hydrogen"
         const val COMMANDS_TOPIC = "anxolerd/feeds/cmd"
 
-        internal val MQTT_SERVER_URL = "ssl://localhost:8883"
+        internal const val CLIENT_ID = "air-quality-android-app"
 
         // Credentials
         // TODO: move outside the code
-        internal val CLIENT_ID = "air-quality-android-app"
-        internal val MQTT_USER = "username"
-        internal val MQTT_PASS = "password"
+        internal val MQTT_SERVER_URL = BuildConfig.MQTT["MQTT_SERVER_URL"]
+        internal val MQTT_USER = BuildConfig.MQTT["MQTT_USER"]
+        internal val MQTT_PASS = BuildConfig.MQTT["MQTT_PASS"]
     }
 
     var mqttClient: MqttAndroidClient
@@ -51,7 +51,7 @@ class MqttHelper(context: Context) : MqttCallbackExtended {
         mqttConnectOptions.isAutomaticReconnect = true
         mqttConnectOptions.isCleanSession = true
         mqttConnectOptions.userName = MQTT_USER
-        mqttConnectOptions.password = MQTT_PASS.toCharArray()
+        mqttConnectOptions.password = MQTT_PASS!!.toCharArray()
 
         try {
             mqttClient.connect(mqttConnectOptions, null, object : IMqttActionListener {
