@@ -2,6 +2,7 @@
 #include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_Client.h"
 #include "mqtt.h"
+#include "macro.hh"
 
 /************************* WiFi Access Point *********************************/
 #ifdef WIFI_SSID
