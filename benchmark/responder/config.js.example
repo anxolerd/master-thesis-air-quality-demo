@@ -1,0 +1,15 @@
+var broker = {
+  url: 'mqtts://example.com:8883',
+  options: {
+    username: 'username',
+    password: 'password',
+  },
+  topics: {
+    commands: 'anxolerd/feeds/mqtt-benchmark-commands',
+    sequence: 'anxolerd/feeds/mqtt-benchmark-sequence',
+  },
+};
+
+module.exports = {
+  broker: broker,
+};
